@@ -1,4 +1,4 @@
-/* 全体のリセット：余計な隙間をなくし、サイズ計算を統一する */
+/* 全体のリセット */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -7,11 +7,11 @@
 
 body {
     font-family: "Helvetica Neue", Arial, sans-serif;
-    background-color: #f0f2f5; /* 薄いグレーの背景 */
+    background-color: #f0f2f5;
     color: #333;
     display: flex;
     flex-direction: column;
-    align-items: center; /* 画面の中央に配置 */
+    align-items: center;
     min-height: 100vh;
     padding: 20px;
 }
@@ -31,34 +31,41 @@ h1 {
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     display: flex;
-    gap: 10px; /* 入力欄同士の隙間 */
+    gap: 10px;
     margin-bottom: 30px;
     width: 100%;
-    max-width: 600px; /* PCで広がりすぎないように制限 */
-    flex-wrap: wrap; /* スマホで狭い時に折り返す */
+    max-width: 600px;
+    flex-wrap: wrap;
+    /* 変更点：テキストエリアに合わせて上揃えにする */
+    align-items: flex-start;
 }
 
-input {
+/* 変更点：inputの代わりにtextareaのスタイルを定義 */
+textarea {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    flex: 1; /* 入力欄が可能な限り広がるように */
-    min-width: 200px; /* スマホで見やすくするための最小幅 */
+    flex: 1; /* 横幅いっぱいに広がる */
+    min-width: 200px;
+    height: 100px; /* 高さを少し広めに確保 */
+    resize: vertical; /* 縦方向のみサイズ変更可能にする */
+    font-family: inherit;
 }
 
 button {
     padding: 10px 20px;
-    background-color: #007bff; /* 青色 */
+    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s;
+    height: 40px; /* ボタンの高さを固定してバランスを取る */
 }
 
 button:hover {
-    background-color: #0056b3; /* ホバー時に少し濃くする */
+    background-color: #0056b3;
 }
 
 /* カードが表示されるエリア */
@@ -71,26 +78,28 @@ button:hover {
     max-width: 800px;
 }
 
-/* 個別のカードのデザイン（JSで作られる要素用） */
+/* 個別のカードのデザイン */
 .card {
     background-color: white;
     width: 200px;
-    height: 150px;
+    /* 変更点：高さは固定せず、中身に合わせて伸びるようにする */
+    min-height: 150px; 
+    height: auto; 
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 15px;
-    text-align: center;
-    cursor: pointer; /* クリックできることを示す指マーク */
+    padding: 25px 15px 15px 15px; /* 上の余白を少し増やして×ボタンと被らないように */
+    text-align: center; /* 基本は中央揃え */
+    cursor: pointer;
     position: relative;
     transition: transform 0.2s;
 }
 
 .card:active {
-    transform: scale(0.98); /* クリックした瞬間に少し凹む演出 */
+    transform: scale(0.98);
 }
 
 /* 問題文のスタイル */
@@ -98,28 +107,39 @@ button:hover {
     font-size: 1.2rem;
     margin-bottom: 10px;
     color: #2c3e50;
+    /* 変更点：改行を反映させる＆左揃えで見やすく */
+    white-space: pre-wrap; 
+    width: 100%;
 }
 
-/* 答えのスタイル（最初は隠すなどの工夫もできますが、今回はシンプルに色を変えて表示） */
+/* 答えのスタイル */
 .card p.answer {
-    color: #e74c3c; /* 赤文字 */
+    color: #e74c3c;
     font-weight: bold;
-    display: none; /* 最初は非表示にする！ */
+    display: none;
+    /* 変更点：改行を反映させる＆左揃えで見やすく */
+    white-space: pre-wrap; 
+    width: 100%;
+    text-align: left; /* 活用表などは左揃えの方が綺麗 */
+    margin-top: 10px;
+    border-top: 1px dashed #ddd; /* 区切り線を入れると見やすい */
+    padding-top: 10px;
 }
 
 /* JavaScriptでクラスがついた時に答えを表示する */
 .card.show-answer p.answer {
     display: block;
 }
-/* --- 追加：削除ボタンのデザイン --- */
+
+/* 削除ボタンのデザイン */
 .delete-btn {
     position: absolute;
     top: 5px;
     right: 5px;
-    background-color: #ff4d4d; /* 赤色 */
+    background-color: #ff4d4d;
     color: white;
     border: none;
-    border-radius: 50%; /* 丸くする */
+    border-radius: 50%;
     width: 25px;
     height: 25px;
     font-size: 14px;
@@ -128,9 +148,9 @@ button:hover {
     justify-content: center;
     align-items: center;
     transition: background-color 0.2s;
-    z-index: 10; /* カードの文字より手前に表示 */
+    z-index: 10;
 }
 
 .delete-btn:hover {
-    background-color: #cc0000; /* ホバー時に濃くする */
+    background-color: #cc0000;
 }
