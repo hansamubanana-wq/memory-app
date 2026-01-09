@@ -3,31 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>暗記アプリ</title>
+    <title>古文単語・文法 覚え帳</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <header>
-        <h1>暗記単語帳</h1>
+        <h1>古文単語・文法 覚え帳</h1>
     </header>
 
     <div class="controls-container">
         <label>
-            <input type="checkbox" id="reverse-mode"> 答え → 問題 モード
+            <input type="checkbox" id="reverse-mode"> 裏（詳細）から出題
         </label>
-        <button id="start-btn">ランダム学習スタート</button>
+        <button id="start-btn">いざ、暗記開始</button>
     </div>
 
     <div id="edit-area">
         <div class="input-container">
-            <textarea id="question" placeholder="問題を入力（例：助動詞「ず」の意味と接続）"></textarea>
-            <textarea id="answer" placeholder="答えを入力
-（例：
-意味：打消
-接続：未然形
-活用：ず・ず・ず・ぬ・ね・○）"></textarea>
-            <button id="add-btn">カードを追加</button>
+            <div class="input-header">
+                <span class="label">見出し（単語・助動詞）</span>
+            </div>
+            <textarea id="question" placeholder="例：助動詞「ず」 / 古語「あてなり」"></textarea>
+            
+            <div class="input-header">
+                <span class="label">詳細（意味・活用・接続）</span>
+                <div class="template-btns">
+                    <button type="button" class="stamp-btn" onclick="insertTemplate('katsuyo')">活用表</button>
+                    <button type="button" class="stamp-btn" onclick="insertTemplate('imi')">意味・接続</button>
+                </div>
+            </div>
+            <textarea id="answer" placeholder="ここに詳細を入力"></textarea>
+            
+            <button id="add-btn">単語帳に書き込む</button>
         </div>
 
         <div id="cards-container" class="cards-container">
@@ -35,11 +44,10 @@
     </div>
 
     <div id="study-area" class="hidden">
-        <div id="study-card-container">
-            </div>
+        <div id="study-card-container"></div>
         <div class="study-controls">
-            <button id="next-card-btn">次のカードへ</button>
-            <button id="quit-btn" class="secondary-btn">学習を終了</button>
+            <button id="next-card-btn">次の札へ</button>
+            <button id="quit-btn" class="secondary-btn">終了する</button>
         </div>
     </div>
 

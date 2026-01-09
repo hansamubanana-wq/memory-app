@@ -15,15 +15,14 @@ const quitBtn = document.getElementById('quit-btn');
 
 // --- データ管理 ---
 let cardsData = JSON.parse(localStorage.getItem('cards')) || [];
-let studyQueue = []; // 学習用にシャッフルされたカードリスト
-let currentStudyIndex = 0; // 今何枚目か
+let studyQueue = [];
+let currentStudyIndex = 0;
 
 // 初期表示
 init();
 
 function init() {
     cardsContainer.innerHTML = '';
-    // 編集画面の一覧表示
     cardsData.forEach((card, index) => {
         createCardElement(card.question, card.answer, index, cardsContainer, true);
     });
@@ -35,7 +34,7 @@ addBtn.addEventListener('click', () => {
     const answerText = answerInput.value;
 
     if(questionText.trim() === '' || answerText.trim() === '') {
-        alert('問題と答えの両方を入力してください！');
+        alert('見出しと詳細の両方を入力してください！');
         return;
     }
 
@@ -44,17 +43,16 @@ addBtn.addEventListener('click', () => {
     saveToLocalStorage();
     init();
 
+    // 入力欄をクリア
     questionInput.value = '';
     answerInput.value = '';
 });
 
 // --- 共通：カード作成関数 ---
-// isEditMode: trueなら「削除ボタン」をつける
 function createCardElement(frontText, backText, index, container, isEditMode) {
     const cardDiv = document.createElement('div');
     cardDiv.classList.add('card');
 
-    // 中身のHTMLを作る
     let htmlContent = '';
     if (isEditMode) {
         htmlContent += `<button class="delete-btn">×</button>`;
@@ -67,17 +65,15 @@ function createCardElement(frontText, backText, index, container, isEditMode) {
     
     cardDiv.innerHTML = htmlContent;
 
-    // クリックで答えを表示
     cardDiv.addEventListener('click', () => {
         cardDiv.classList.toggle('show-answer');
     });
 
-    // 削除ボタンの処理（編集モードのみ）
     if (isEditMode) {
         const delBtn = cardDiv.querySelector('.delete-btn');
         delBtn.addEventListener('click', (event) => {
-            event.stopPropagation(); // カードのクリックイベントを止める
-            if(confirm('本当に削除しますか？')) {
+            event.stopPropagation();
+            if(confirm('この札を削除しますか？')) {
                 cardsData.splice(index, 1);
                 saveToLocalStorage();
                 init();
@@ -89,40 +85,31 @@ function createCardElement(frontText, backText, index, container, isEditMode) {
 }
 
 // --- 学習モードの処理 ---
-
-// 「学習スタート」ボタン
 startBtn.addEventListener('click', () => {
     if (cardsData.length === 0) {
-        alert('カードが登録されていません。まずは追加してください。');
+        alert('札がありません。まずは追加してください。');
         return;
     }
 
-    // 1. 画面の切り替え
     editArea.classList.add('hidden');
     studyArea.classList.remove('hidden');
-    startBtn.disabled = true; // 連打防止
+    startBtn.disabled = true;
     reverseModeCheckbox.disabled = true;
 
-    // 2. データをコピーしてシャッフル（ランダム順）
-    // 配列をランダムに並び替えるロジック
     studyQueue = [...cardsData].sort(() => Math.random() - 0.5);
     currentStudyIndex = 0;
 
-    // 3. 最初のカードを表示
     showStudyCard();
 });
 
-// 学習カードを表示する関数
 function showStudyCard() {
-    studyCardContainer.innerHTML = ''; // 前のカードを消す
+    studyCardContainer.innerHTML = '';
 
     if (currentStudyIndex >= studyQueue.length) {
-        // 全部終わったら
         if(confirm('一周しました！学習を終了しますか？\n（キャンセルで最初から再スタート）')) {
             quitStudyMode();
             return;
         } else {
-            // 再シャッフルして継続
             studyQueue.sort(() => Math.random() - 0.5);
             currentStudyIndex = 0;
         }
@@ -131,21 +118,17 @@ function showStudyCard() {
     const cardData = studyQueue[currentStudyIndex];
     const isReverse = reverseModeCheckbox.checked;
 
-    // 逆モードなら「答え」を表面、「問題」を裏面にする
     const front = isReverse ? cardData.answer : cardData.question;
     const back = isReverse ? cardData.question : cardData.answer;
 
-    // 学習用カードを作成（削除ボタンなし）
     createCardElement(front, back, null, studyCardContainer, false);
 }
 
-// 「次のカードへ」ボタン
 nextCardBtn.addEventListener('click', () => {
     currentStudyIndex++;
     showStudyCard();
 });
 
-// 「学習を終了」ボタン
 quitBtn.addEventListener('click', quitStudyMode);
 
 function quitStudyMode() {
@@ -158,3 +141,33 @@ function quitStudyMode() {
 function saveToLocalStorage() {
     localStorage.setItem('cards', JSON.stringify(cardsData));
 }
+
+// --- 新機能：テンプレート挿入機能 ---
+// HTML側のonclickで呼び出されます
+window.insertTemplate = function(type) {
+    let textToInsert = "";
+    
+    if (type === 'katsuyo') {
+        textToInsert = `【活用】
+未然形：
+連用形：
+終止形：
+連体形：
+已然形：
+命令形：`;
+    } else if (type === 'imi') {
+        textToInsert = `意味：
+接続：`;
+    }
+
+    // すでに入力されている内容の後ろに追加する
+    const currentText = answerInput.value;
+    if (currentText.length > 0) {
+        answerInput.value = currentText + "\n\n" + textToInsert;
+    } else {
+        answerInput.value = textToInsert;
+    }
+    
+    // 入力欄にフォーカスを戻す
+    answerInput.focus();
+};

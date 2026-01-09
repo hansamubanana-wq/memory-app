@@ -6,39 +6,48 @@
 }
 
 body {
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
+    /* フォントを明朝体に変更して「古典」っぽくする */
+    font-family: "Sawarabi Mincho", "Yu Mincho", "Hiragino Mincho ProN", serif;
+    background-color: #e6e6fa; /* 薄い藤色（ラベンダー） */
+    color: #2b2b2b; /* 墨色 */
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
     padding: 20px;
+    background-image: radial-gradient(#dcdcdc 1px, transparent 1px); /* 和紙っぽいドット柄 */
+    background-size: 20px 20px;
 }
 
 header {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #556b2f; /* 抹茶色 */
+    padding-bottom: 10px;
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
 }
 
 h1 {
-    color: #2c3e50;
+    color: #556b2f; /* 抹茶色 */
+    letter-spacing: 0.1em;
 }
 
-/* --- 画面切り替え用ユーティリティ --- */
+/* --- 画面切り替え用 --- */
 .hidden {
     display: none !important;
 }
 
-/* --- コントロールエリア（学習ボタンなど） --- */
+/* --- コントロールエリア --- */
 .controls-container {
     margin-bottom: 20px;
     display: flex;
     gap: 15px;
     align-items: center;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.9);
     padding: 10px 20px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 4px; /* 丸みを減らして和風に */
+    border: 1px solid #ccc;
 }
 
 .controls-container label {
@@ -56,51 +65,97 @@ h1 {
 
 .input-container {
     background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 25px;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     display: flex;
+    flex-direction: column; /* 縦並びに変更 */
     gap: 10px;
     margin-bottom: 30px;
     width: 100%;
     max-width: 600px;
-    flex-wrap: wrap;
-    align-items: flex-start;
+    border-top: 5px solid #800080; /* 紫色のアクセント */
+}
+
+/* 入力欄の上のラベルとボタン */
+.input-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 5px;
+}
+
+.label {
+    font-weight: bold;
+    color: #555;
+    font-size: 0.9em;
+}
+
+/* テンプレート挿入ボタン（スタンプ） */
+.template-btns {
+    display: flex;
+    gap: 5px;
+}
+
+.stamp-btn {
+    padding: 4px 10px;
+    font-size: 0.8em;
+    background-color: #f0e68c; /* カーキ色 */
+    color: #333;
+    border: 1px solid #ccc;
+    height: auto;
+}
+.stamp-btn:hover {
+    background-color: #khaki;
 }
 
 textarea {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    flex: 1;
-    min-width: 200px;
-    height: 100px;
+    padding: 12px;
+    border: 1px solid #aaa;
+    border-radius: 2px;
+    width: 100%;
+    min-height: 60px;
     resize: vertical;
     font-family: inherit;
+    font-size: 1.1em; /* 文字を少し大きく */
+    line-height: 1.6;
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #007bff;
+/* 答えの欄は大きく */
+#answer {
+    min-height: 150px;
+}
+
+#add-btn {
+    margin-top: 10px;
+    padding: 12px;
+    background-color: #800080; /* 紫色 */
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s;
-    height: 40px;
+    font-size: 1.1em;
 }
 
-button:hover {
-    background-color: #0056b3;
+#add-btn:hover {
+    background-color: #4b0082;
 }
 
-/* 終了ボタン（グレー） */
-.secondary-btn {
-    background-color: #6c757d;
+/* スタートボタン */
+#start-btn {
+    padding: 8px 20px;
+    background-color: #556b2f; /* 抹茶色 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
 }
-.secondary-btn:hover {
-    background-color: #5a6268;
+#start-btn:hover {
+    background-color: #3d4f21;
 }
 
 /* --- カード表示エリア --- */
@@ -113,49 +168,62 @@ button:hover {
     max-width: 800px;
 }
 
-/* カードのデザイン */
+/* カードのデザイン（短冊風） */
 .card {
-    background-color: white;
-    width: 200px;
-    min-height: 150px;
+    background-color: #fffaf0; /* フローラルホワイト（和紙色） */
+    width: 220px;
+    min-height: 180px;
     height: auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 2px;
+    border: 1px solid #d3d3d3;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 25px 15px 15px 15px;
+    padding: 25px 20px;
     text-align: center;
     cursor: pointer;
     position: relative;
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-/* 学習モード時はカードを大きくする */
+.card:hover {
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.15);
+}
+
+/* 学習モード時はカードを大きく */
 #study-card-container .card {
-    width: 300px;
-    min-height: 200px;
-    font-size: 1.1em;
+    width: 320px;
+    min-height: 240px;
+    font-size: 1.2em;
+    border: 2px solid #556b2f;
 }
 
 .card:active {
     transform: scale(0.98);
 }
 
-.card h3, .card p.answer {
+.card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    color: #2b2b2b;
     white-space: pre-wrap;
     width: 100%;
+    font-weight: bold;
 }
 
 .card p.answer {
-    color: #e74c3c;
-    font-weight: bold;
+    color: #800080; /* 答えは紫色 */
     display: none;
+    white-space: pre-wrap;
+    width: 100%;
     text-align: left;
-    margin-top: 10px;
-    border-top: 1px dashed #ddd;
-    padding-top: 10px;
+    margin-top: 15px;
+    border-top: 1px solid #ccc; /* 実線に変更 */
+    padding-top: 15px;
+    font-size: 0.95em;
+    line-height: 1.8;
 }
 
 .card.show-answer p.answer {
@@ -167,12 +235,12 @@ button:hover {
     position: absolute;
     top: 5px;
     right: 5px;
-    background-color: #ff4d4d;
+    background-color: #a52a2a; /* 茶色っぽい赤 */
     color: white;
     border: none;
     border-radius: 50%;
-    width: 25px;
-    height: 25px;
+    width: 24px;
+    height: 24px;
     font-size: 14px;
     cursor: pointer;
     display: flex;
@@ -180,13 +248,31 @@ button:hover {
     align-items: center;
     z-index: 10;
 }
-.delete-btn:hover {
-    background-color: #cc0000;
-}
 
 /* 学習コントロール */
 .study-controls {
     margin-top: 20px;
     display: flex;
     gap: 20px;
+}
+
+#next-card-btn {
+    padding: 10px 25px;
+    background-color: #d2691e; /* チョコレート色 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.1em;
+}
+
+/* 終了ボタン */
+.secondary-btn {
+    background-color: #808080;
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
