@@ -1,0 +1,113 @@
+/* 全体のリセット：余計な隙間をなくし、サイズ計算を統一する */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    background-color: #f0f2f5; /* 薄いグレーの背景 */
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 画面の中央に配置 */
+    min-height: 100vh;
+    padding: 20px;
+}
+
+header {
+    margin-bottom: 30px;
+}
+
+h1 {
+    color: #2c3e50;
+}
+
+/* 入力エリアのデザイン */
+.input-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 10px; /* 入力欄同士の隙間 */
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 600px; /* PCで広がりすぎないように制限 */
+    flex-wrap: wrap; /* スマホで狭い時に折り返す */
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex: 1; /* 入力欄が可能な限り広がるように */
+    min-width: 200px; /* スマホで見やすくするための最小幅 */
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff; /* 青色 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3; /* ホバー時に少し濃くする */
+}
+
+/* カードが表示されるエリア */
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+/* 個別のカードのデザイン（JSで作られる要素用） */
+.card {
+    background-color: white;
+    width: 200px;
+    height: 150px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer; /* クリックできることを示す指マーク */
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.card:active {
+    transform: scale(0.98); /* クリックした瞬間に少し凹む演出 */
+}
+
+/* 問題文のスタイル */
+.card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+/* 答えのスタイル（最初は隠すなどの工夫もできますが、今回はシンプルに色を変えて表示） */
+.card p.answer {
+    color: #e74c3c; /* 赤文字 */
+    font-weight: bold;
+    display: none; /* 最初は非表示にする！ */
+}
+
+/* JavaScriptでクラスがついた時に答えを表示する */
+.card.show-answer p.answer {
+    display: block;
+}
