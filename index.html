@@ -14,16 +14,16 @@
     </header>
 
     <div class="controls-container">
-        <span style="color: #556b2f; font-weight: bold; margin-right: 10px;">★記述特訓モード</span>
         <button id="start-btn">いざ、暗記開始</button>
-        <button id="retry-miss-btn" style="background-color: #ff8c00; color: white;">苦手特訓（ミスのみ）</button>
-        <button id="reset-data-btn" style="background-color: #d9534f; margin-left: auto; font-size: 0.8em; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">データを初期化</button>
+        <button id="retry-miss-btn">苦手特訓（ミスのみ）</button>
+        <button id="reset-data-btn">データを初期化</button>
     </div>
 
     <div id="edit-area">
         <div class="input-container">
             <div class="input-group">
-                <span class="label-main">見出し（助動詞・単語）</span>
+                <span class="label-main">新しい札を作成</span>
+                <span class="label">見出し（助動詞・単語）</span>
                 <input type="text" id="question" placeholder="例：る">
             </div>
 
@@ -110,7 +110,7 @@
                     </div>
                 </div>
                 <button id="check-step1-btn" class="check-btn">答え合わせ</button>
-                <button id="go-step2-btn" class="next-btn hidden" style="background-color: #28a745; margin-top: 15px;">次へ進む (活用表へ)</button>
+                <button id="go-step2-btn" class="next-btn hidden">次へ進む</button>
             </div>
 
             <div id="quiz-step-2" class="quiz-step hidden">
@@ -124,7 +124,7 @@
                     <div class="k-box"><span>命令</span><input type="text" class="quiz-k-input" data-idx="5"><p class="mini-fb"></p></div>
                 </div>
                 <button id="check-step2-btn" class="check-btn">活用表を確認</button>
-                <button id="go-step3-btn" class="next-btn hidden" style="background-color: #28a745; margin-top: 15px;">次へ進む (結果へ)</button>
+                <button id="go-step3-btn" class="next-btn hidden">次へ進む</button>
             </div>
 
             <div id="quiz-step-3" class="quiz-step hidden">
