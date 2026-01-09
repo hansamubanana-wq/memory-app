@@ -111,3 +111,26 @@ button:hover {
 .card.show-answer p.answer {
     display: block;
 }
+/* --- 追加：削除ボタンのデザイン --- */
+.delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #ff4d4d; /* 赤色 */
+    color: white;
+    border: none;
+    border-radius: 50%; /* 丸くする */
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s;
+    z-index: 10; /* カードの文字より手前に表示 */
+}
+
+.delete-btn:hover {
+    background-color: #cc0000; /* ホバー時に濃くする */
+}
