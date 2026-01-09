@@ -22,25 +22,56 @@
 
     <div id="edit-area">
         <div class="input-container">
-            <div class="input-header">
-                <span class="label">見出し（単語・助動詞）</span>
+            <div class="input-group">
+                <span class="label-main">見出し（助動詞・単語）</span>
+                <input type="text" id="question" placeholder="例：る・らる">
             </div>
-            <textarea id="question" placeholder="例：助動詞「ず」 / 古語「あてなり」"></textarea>
-            
-            <div class="input-header">
-                <span class="label">詳細（意味・活用・接続）</span>
-                <div class="template-btns">
-                    <button type="button" class="stamp-btn" onclick="insertTemplate('katsuyo')">活用表</button>
-                    <button type="button" class="stamp-btn" onclick="insertTemplate('imi')">意味・接続</button>
+
+            <div class="row-group">
+                <div class="half-box">
+                    <span class="label">意味</span>
+                    <input type="text" id="imi" placeholder="受身・尊敬...">
+                </div>
+                <div class="half-box">
+                    <span class="label">接続</span>
+                    <input type="text" id="setsuzoku" placeholder="未然形">
                 </div>
             </div>
-            <textarea id="answer" placeholder="ここに詳細を入力"></textarea>
+            
+            <div class="katsuyo-section">
+                <span class="label-sub">活用表</span>
+                <div class="katsuyo-grid">
+                    <div class="k-box">
+                        <span>未然</span>
+                        <input type="text" id="k-mizen" placeholder="れ">
+                    </div>
+                    <div class="k-box">
+                        <span>連用</span>
+                        <input type="text" id="k-renyo" placeholder="れ">
+                    </div>
+                    <div class="k-box">
+                        <span>終止</span>
+                        <input type="text" id="k-shushi" placeholder="る">
+                    </div>
+                    <div class="k-box">
+                        <span>連体</span>
+                        <input type="text" id="k-rentai" placeholder="るる">
+                    </div>
+                    <div class="k-box">
+                        <span>已然</span>
+                        <input type="text" id="k-izen" placeholder="るれ">
+                    </div>
+                    <div class="k-box">
+                        <span>命令</span>
+                        <input type="text" id="k-meirei" placeholder="れよ">
+                    </div>
+                </div>
+            </div>
             
             <button id="add-btn">単語帳に書き込む</button>
         </div>
 
-        <div id="cards-container" class="cards-container">
-            </div>
+        <div id="cards-container" class="cards-container"></div>
     </div>
 
     <div id="study-area" class="hidden">
