@@ -14,57 +14,68 @@
     </header>
 
     <div class="controls-container">
-        <label>
-            <input type="checkbox" id="reverse-mode"> 裏（詳細）から出題
-        </label>
+        <span style="color: #556b2f; font-weight: bold; margin-right: 10px;">★クイズモード搭載</span>
         <button id="start-btn">いざ、暗記開始</button>
+        <button id="reset-data-btn" style="background-color: #d9534f; margin-left: auto; font-size: 0.8em; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">データを初期化</button>
     </div>
 
     <div id="edit-area">
         <div class="input-container">
             <div class="input-group">
                 <span class="label-main">見出し（助動詞・単語）</span>
-                <input type="text" id="question" placeholder="例：る・らる">
+                <input type="text" id="question" placeholder="例：る">
             </div>
 
             <div class="row-group">
                 <div class="half-box">
-                    <span class="label">意味</span>
-                    <input type="text" id="imi" placeholder="受身・尊敬...">
+                    <span class="label">接続（クイズ対象）</span>
+                    <select id="setsuzoku">
+                        <option value="">選択してください</option>
+                        <option value="未然形">未然形</option>
+                        <option value="連用形">連用形</option>
+                        <option value="終止形">終止形</option>
+                        <option value="連体形">連体形</option>
+                        <option value="已然形">已然形</option>
+                        <option value="命令形">命令形</option>
+                        <option value="体言">体言</option>
+                        <option value="その他">その他</option>
+                    </select>
                 </div>
                 <div class="half-box">
-                    <span class="label">接続</span>
-                    <input type="text" id="setsuzoku" placeholder="未然形">
+                    <span class="label">活用の種類（クイズ対象）</span>
+                    <select id="k-type">
+                        <option value="">選択してください</option>
+                        <option value="四段">四段</option>
+                        <option value="上一段">上一段</option>
+                        <option value="下一段">下一段</option>
+                        <option value="上二段">上二段</option>
+                        <option value="下二段">下二段</option>
+                        <option value="カ変">カ変</option>
+                        <option value="サ変">サ変</option>
+                        <option value="ナ変">ナ変</option>
+                        <option value="ラ変">ラ変</option>
+                        <option value="形容詞">形容詞</option>
+                        <option value="形容動詞">形容動詞</option>
+                        <option value="特殊">特殊</option>
+                        <option value="無変化">無変化</option>
+                    </select>
                 </div>
             </div>
             
+            <div class="input-group" style="margin-top: 10px;">
+                <span class="label">意味（自己確認用）</span>
+                <input type="text" id="imi" placeholder="受身・尊敬・可能・自発">
+            </div>
+
             <div class="katsuyo-section">
-                <span class="label-sub">活用表</span>
+                <span class="label-sub">活用表（自己確認用）</span>
                 <div class="katsuyo-grid">
-                    <div class="k-box">
-                        <span>未然</span>
-                        <input type="text" id="k-mizen" placeholder="れ">
-                    </div>
-                    <div class="k-box">
-                        <span>連用</span>
-                        <input type="text" id="k-renyo" placeholder="れ">
-                    </div>
-                    <div class="k-box">
-                        <span>終止</span>
-                        <input type="text" id="k-shushi" placeholder="る">
-                    </div>
-                    <div class="k-box">
-                        <span>連体</span>
-                        <input type="text" id="k-rentai" placeholder="るる">
-                    </div>
-                    <div class="k-box">
-                        <span>已然</span>
-                        <input type="text" id="k-izen" placeholder="るれ">
-                    </div>
-                    <div class="k-box">
-                        <span>命令</span>
-                        <input type="text" id="k-meirei" placeholder="れよ">
-                    </div>
+                    <div class="k-box"><span>未然</span><input type="text" id="k-mizen" placeholder="れ"></div>
+                    <div class="k-box"><span>連用</span><input type="text" id="k-renyo" placeholder="れ"></div>
+                    <div class="k-box"><span>終止</span><input type="text" id="k-shushi" placeholder="る"></div>
+                    <div class="k-box"><span>連体</span><input type="text" id="k-rentai" placeholder="るる"></div>
+                    <div class="k-box"><span>已然</span><input type="text" id="k-izen" placeholder="るれ"></div>
+                    <div class="k-box"><span>命令</span><input type="text" id="k-meirei" placeholder="れよ"></div>
                 </div>
             </div>
             
@@ -75,10 +86,34 @@
     </div>
 
     <div id="study-area" class="hidden">
-        <div id="study-card-container"></div>
-        <div class="study-controls">
-            <button id="next-card-btn">次の札へ</button>
-            <button id="quit-btn" class="secondary-btn">終了する</button>
+        
+        <div class="study-card-wrapper">
+            <div id="quiz-question-card" class="card study-card">
+                </div>
+        </div>
+
+        <div id="quiz-interface" class="quiz-container">
+            
+            <div id="quiz-step-1" class="quiz-step">
+                <p class="quiz-instruction">Q1. 何形に接続する？</p>
+                <div id="options-setsuzoku" class="options-grid"></div>
+            </div>
+
+            <div id="quiz-step-2" class="quiz-step hidden">
+                <p class="quiz-instruction">Q2. 活用の種類は？</p>
+                <div id="options-type" class="options-grid"></div>
+            </div>
+
+            <div id="quiz-step-3" class="quiz-step hidden">
+                <p class="quiz-instruction">Q3. 意味と活用表を確認しよう</p>
+                <div id="final-answer-display" class="final-answer-box"></div>
+                <button id="next-card-btn" class="next-btn">次の問題へ</button>
+            </div>
+
+        </div>
+
+        <div class="study-footer">
+            <button id="quit-btn" class="secondary-btn">学習を中断する</button>
         </div>
     </div>
 
