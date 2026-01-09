@@ -32,11 +32,11 @@ const quizInputType = document.getElementById('quiz-input-type');
 const fbSetsu = document.getElementById('fb-setsu');
 const fbType = document.getElementById('fb-type');
 const checkStep1Btn = document.getElementById('check-step1-btn');
-const goStep2Btn = document.getElementById('go-step2-btn'); // 追加
+const goStep2Btn = document.getElementById('go-step2-btn');
 
 const quizKInputs = document.querySelectorAll('.quiz-k-input');
 const checkStep2Btn = document.getElementById('check-step2-btn');
-const goStep3Btn = document.getElementById('go-step3-btn'); // 追加
+const goStep3Btn = document.getElementById('go-step3-btn');
 
 const finalAnswerDisplay = document.getElementById('final-answer-display');
 const nextCardBtn = document.getElementById('next-card-btn');
@@ -178,6 +178,26 @@ function createCardElement(data, index, container) {
     container.appendChild(cardDiv);
 }
 
+// --- 振動とアニメーション関数 ---
+function triggerFeedback(type, element) {
+    if (!element) return;
+
+    // アニメーションのリセット（連続再生用）
+    element.classList.remove('anim-pop', 'anim-shake');
+    // リフローを発生させてアニメーションを再始動
+    void element.offsetWidth;
+
+    if (type === 'correct') {
+        element.classList.add('anim-pop');
+        // スマホで短く振動（Android）
+        if (navigator.vibrate) navigator.vibrate(40);
+    } else {
+        element.classList.add('anim-shake');
+        // スマホでブルブルっと振動
+        if (navigator.vibrate) navigator.vibrate([30, 30, 30]);
+    }
+}
+
 // --- クイズロジック ---
 startBtn.addEventListener('click', () => startQuiz(false));
 retryMissBtn.addEventListener('click', () => startQuiz(true));
@@ -246,21 +266,27 @@ checkStep1Btn.addEventListener('click', () => {
 
     let isWrong = false;
 
+    // 接続の判定
     if (checkMatch(userSetsu, ansSetsu)) {
         quizInputSetsu.classList.add('correct-field');
         fbSetsu.textContent = "⭕️"; fbSetsu.className = "feedback-msg correct";
+        triggerFeedback('correct', quizInputSetsu); // 振動＆アニメーション
     } else {
         quizInputSetsu.classList.add('wrong-field');
         fbSetsu.textContent = `❌ 正解: ${currentCardData.setsu}`; fbSetsu.className = "feedback-msg wrong";
+        triggerFeedback('wrong', quizInputSetsu); // 振動＆アニメーション
         isWrong = true;
     }
 
+    // 種類の判定
     if (checkMatch(userType, ansType)) {
         quizInputType.classList.add('correct-field');
         fbType.textContent = "⭕️"; fbType.className = "feedback-msg correct";
+        triggerFeedback('correct', quizInputType);
     } else {
         quizInputType.classList.add('wrong-field');
         fbType.textContent = `❌ 正解: ${currentCardData.type}`; fbType.className = "feedback-msg wrong";
+        triggerFeedback('wrong', quizInputType);
         isWrong = true;
     }
 
@@ -269,12 +295,10 @@ checkStep1Btn.addEventListener('click', () => {
     quizInputSetsu.disabled = true;
     quizInputType.disabled = true;
 
-    // タイマー削除: ボタン切り替えのみ
     checkStep1Btn.classList.add('hidden');
     goStep2Btn.classList.remove('hidden');
 });
 
-// Step1 -> Step2 遷移
 goStep2Btn.addEventListener('click', () => {
     step1.classList.add('hidden');
     step2.classList.remove('hidden');
@@ -294,9 +318,11 @@ checkStep2Btn.addEventListener('click', () => {
 
         if (isMatch) {
             input.classList.add('correct-field');
+            triggerFeedback('correct', input); // 振動＆アニメーション
         } else {
             input.classList.add('wrong-field');
             feedback.textContent = currentCardData.k[index];
+            triggerFeedback('wrong', input); // 振動＆アニメーション
             isWrong = true;
         }
         input.disabled = true;
@@ -305,7 +331,6 @@ checkStep2Btn.addEventListener('click', () => {
     if (isWrong) currentMistakeCount++;
     updateStats(currentCardData, currentMistakeCount);
 
-    // タイマー削除: ボタン切り替えのみ
     checkStep2Btn.classList.add('hidden');
     goStep3Btn.classList.remove('hidden');
 
@@ -325,7 +350,6 @@ ${currentCardData.imi}
 命令：${currentCardData.k[5]}`;
 });
 
-// Step2 -> Step3 遷移
 goStep3Btn.addEventListener('click', () => {
     step2.classList.add('hidden');
     step3.classList.remove('hidden');
