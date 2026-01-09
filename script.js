@@ -1,8 +1,8 @@
 // --- HTML要素の取得 ---
 const questionInput = document.getElementById('question');
 const imiInput = document.getElementById('imi');
-const setsuzokuInput = document.getElementById('setsuzoku'); // select
-const typeInput = document.getElementById('k-type'); // select
+const setsuzokuInput = document.getElementById('setsuzoku');
+const typeInput = document.getElementById('k-type');
 
 const kMizen = document.getElementById('k-mizen');
 const kRenyo = document.getElementById('k-renyo');
@@ -18,6 +18,7 @@ const cardsContainer = document.getElementById('cards-container');
 const editArea = document.getElementById('edit-area');
 const studyArea = document.getElementById('study-area');
 const startBtn = document.getElementById('start-btn');
+const retryMissBtn = document.getElementById('retry-miss-btn');
 const resetDataBtn = document.getElementById('reset-data-btn');
 const quitBtn = document.getElementById('quit-btn');
 
@@ -25,12 +26,22 @@ const quizQuestionCard = document.getElementById('quiz-question-card');
 const step1 = document.getElementById('quiz-step-1');
 const step2 = document.getElementById('quiz-step-2');
 const step3 = document.getElementById('quiz-step-3');
-const optionsSetsuzoku = document.getElementById('options-setsuzoku');
-const optionsType = document.getElementById('options-type');
+
+const quizInputSetsu = document.getElementById('quiz-input-setsu');
+const quizInputType = document.getElementById('quiz-input-type');
+const fbSetsu = document.getElementById('fb-setsu');
+const fbType = document.getElementById('fb-type');
+const checkStep1Btn = document.getElementById('check-step1-btn');
+const goStep2Btn = document.getElementById('go-step2-btn'); // 追加
+
+const quizKInputs = document.querySelectorAll('.quiz-k-input');
+const checkStep2Btn = document.getElementById('check-step2-btn');
+const goStep3Btn = document.getElementById('go-step3-btn'); // 追加
+
 const finalAnswerDisplay = document.getElementById('final-answer-display');
 const nextCardBtn = document.getElementById('next-card-btn');
 
-// --- 構造化されたプリセットデータ（23枚） ---
+// --- プリセットデータ ---
 const PRESET_DATA = [
     { q: "る", imi: "受身・尊敬・可能・自発", setsu: "未然形", type: "下二段", k: ["れ", "れ", "る", "るる", "るれ", "れよ"] },
     { q: "らる", imi: "受身・尊敬・可能・自発", setsu: "未然形", type: "下二段", k: ["られ", "られ", "らる", "らるる", "らるれ", "られよ"] },
@@ -57,43 +68,38 @@ const PRESET_DATA = [
     { q: "ごとし", imi: "比況・例示", setsu: "連体形", type: "形容詞", k: ["ごとく", "ごとく", "ごとし", "ごとき", "ごとけれ", "―"] }
 ];
 
-// 選択肢の候補リスト
-const SETSUZOKU_LIST = ["未然形", "連用形", "終止形", "連体形", "已然形", "命令形", "体言"];
-const TYPE_LIST = ["四段", "上一段", "下一段", "上二段", "下二段", "カ変", "サ変", "ナ変", "ラ変", "形容詞", "形容動詞", "特殊", "無変化"];
-
-// --- データ読み込み（自動修復機能付き） ---
+// --- データ読み込み ---
 let cardsData = null;
-
 try {
     const rawData = localStorage.getItem('cards');
     if (rawData) {
         const parsed = JSON.parse(rawData);
-        // データチェック：配列であり、かつ最新形式（kプロパティを持っているか）を確認
         if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].k) {
             cardsData = parsed;
-        } else {
-            console.log("古いデータ形式のため、初期データを使用します");
         }
     }
-} catch (e) {
-    console.error("データ読み込みエラー", e);
-}
+} catch (e) { console.error(e); }
 
-// データがない、または古かった場合はプリセットを使う
 if (!cardsData) {
-    cardsData = [...PRESET_DATA];
+    cardsData = PRESET_DATA.map(d => ({ ...d, stats: { correct: 0, miss: 0 } }));
     saveToLocalStorage();
+} else {
+    cardsData = cardsData.map(d => {
+        if (!d.stats) d.stats = { correct: 0, miss: 0 };
+        return d;
+    });
 }
 
 let studyQueue = [];
 let currentStudyIndex = 0;
+let currentCardData = null;
+let currentMistakeCount = 0;
 
 init();
 
 function init() {
     cardsContainer.innerHTML = '';
     cardsData.forEach((card, index) => {
-        // 万が一壊れたデータが混ざっていてもエラーで止まらないようにする
         if (card && card.k) {
             createCardElement(card, index, cardsContainer);
         }
@@ -101,185 +107,246 @@ function init() {
 }
 
 // リセットボタン
-if (resetDataBtn) {
-    resetDataBtn.addEventListener('click', () => {
-        if(confirm('注意：全てのデータが消え、初期データ（23枚）に戻ります。\nよろしいですか？')) {
-            cardsData = [...PRESET_DATA];
-            saveToLocalStorage();
-            init();
-            alert('データを初期化しました！');
-        }
-    });
-}
+resetDataBtn.addEventListener('click', () => {
+    if(confirm('全てのデータを初期化してよろしいですか？\n学習記録も消去されます。')) {
+        cardsData = PRESET_DATA.map(d => ({ ...d, stats: { correct: 0, miss: 0 } }));
+        saveToLocalStorage();
+        init();
+        alert('データを初期化しました');
+    }
+});
 
-// カード追加（構造化して保存）
+// カード追加
 addBtn.addEventListener('click', () => {
     const q = questionInput.value.trim();
     const setsu = setsuzokuInput.value;
     const type = typeInput.value;
     const imi = imiInput.value.trim();
-    
     const k = [
         kMizen.value.trim(), kRenyo.value.trim(), kShushi.value.trim(),
         kRentai.value.trim(), kIzen.value.trim(), kMeirei.value.trim()
     ];
 
-    if(!q || !setsu || !type) {
-        alert('見出し、接続、活用の種類は必須です（クイズに使います）');
-        return;
-    }
+    if(!q || !setsu || !type) { alert('見出し、接続、活用の種類は必須です'); return; }
 
-    const newCard = { q, imi, setsu, type, k };
+    const newCard = { q, imi, setsu, type, k, stats: { correct: 0, miss: 0 } };
     cardsData.push(newCard);
     saveToLocalStorage();
     init();
 
-    // 入力欄クリア
-    questionInput.value = '';
-    imiInput.value = '';
-    setsuzokuInput.value = '';
-    typeInput.value = '';
+    // クリア
+    questionInput.value = ''; imiInput.value = '';
+    setsuzokuInput.value = ''; typeInput.value = '';
     kMizen.value = ''; kRenyo.value = ''; kShushi.value = '';
     kRentai.value = ''; kIzen.value = ''; kMeirei.value = '';
     questionInput.focus();
 });
 
-// リスト表示用カード作成
+// カード作成
 function createCardElement(data, index, container) {
     const cardDiv = document.createElement('div');
     cardDiv.classList.add('card');
     
-    // 一覧では簡易表示
+    const stats = data.stats || { correct: 0, miss: 0 };
+    let statsHtml = `<div class="stats-label stats-none">未学習</div>`;
+    if (stats.correct + stats.miss > 0) {
+        if (stats.miss === 0) {
+            statsHtml = `<div class="stats-label stats-good">完璧! (${stats.correct})</div>`;
+        } else {
+            statsHtml = `<div class="stats-label stats-bad">ミス: ${stats.miss}</div>`;
+        }
+    }
+
     cardDiv.innerHTML = `
         <button class="delete-btn">×</button>
         <h3>${data.q}</h3>
-        <p class="detail">接続：${data.setsu}</p>
+        ${statsHtml}
+        <p class="detail" style="margin-top:5px;">接続：${data.setsu}</p>
         <p class="detail">種類：${data.type}</p>
         <p class="answer">
 【意味】${data.imi}
 【活用】
-未然：${data.k[0] || ''}
-連用：${data.k[1] || ''}
-終止：${data.k[2] || ''}
-連体：${data.k[3] || ''}
-已然：${data.k[4] || ''}
-命令：${data.k[5] || ''}
+未然：${data.k[0]||''} 連用：${data.k[1]||''} 終止：${data.k[2]||''}
+連体：${data.k[3]||''} 已然：${data.k[4]||''} 命令：${data.k[5]||''}
         </p>
     `;
-
     cardDiv.addEventListener('click', () => cardDiv.classList.toggle('show-answer'));
-
     cardDiv.querySelector('.delete-btn').addEventListener('click', (e) => {
         e.stopPropagation();
-        if(confirm('削除しますか？')) {
-            cardsData.splice(index, 1);
-            saveToLocalStorage();
-            init();
-        }
+        if(confirm('削除しますか？')) { cardsData.splice(index, 1); saveToLocalStorage(); init(); }
     });
-
     container.appendChild(cardDiv);
 }
 
 // --- クイズロジック ---
-startBtn.addEventListener('click', () => {
+startBtn.addEventListener('click', () => startQuiz(false));
+retryMissBtn.addEventListener('click', () => startQuiz(true));
+
+function startQuiz(onlyMiss) {
     if (cardsData.length === 0) { alert('札がありません'); return; }
-    editArea.classList.add('hidden');
-    studyArea.classList.remove('hidden');
-    startBtn.disabled = true;
-    if(resetDataBtn) resetDataBtn.style.display = 'none';
 
-    studyQueue = [...cardsData].sort(() => Math.random() - 0.5);
-    currentStudyIndex = 0;
-    showQuiz();
-});
-
-function showQuiz() {
-    // 終了判定
-    if (currentStudyIndex >= studyQueue.length) {
-        if(confirm('一周しました！終了しますか？')) {
-            quitStudy(); return;
-        } else {
-            studyQueue.sort(() => Math.random() - 0.5);
-            currentStudyIndex = 0;
+    let targetCards = [...cardsData];
+    if (onlyMiss) {
+        targetCards = targetCards.filter(card => card.stats && card.stats.miss > 0);
+        if (targetCards.length === 0) {
+            alert('間違えたカードはありません！'); return;
         }
     }
 
-    const data = studyQueue[currentStudyIndex];
-    if (!data || !data.k) {
-        // 万が一壊れたデータならスキップ
-        currentStudyIndex++;
-        showQuiz();
-        return;
+    studyQueue = targetCards.sort(() => Math.random() - 0.5);
+    
+    editArea.classList.add('hidden');
+    studyArea.classList.remove('hidden');
+    startBtn.disabled = true;
+    retryMissBtn.disabled = true;
+    if(resetDataBtn) resetDataBtn.style.display = 'none';
+
+    currentStudyIndex = 0;
+    showQuiz();
+}
+
+function showQuiz() {
+    if (currentStudyIndex >= studyQueue.length) {
+        if(confirm('学習が終了しました！リストに戻りますか？')) { quitStudy(); return; }
+        else { studyQueue.sort(() => Math.random() - 0.5); currentStudyIndex = 0; }
     }
 
-    // UI初期化
-    quizQuestionCard.innerHTML = `<h3>${data.q}</h3>`;
+    currentCardData = studyQueue[currentStudyIndex];
+    if (!currentCardData || !currentCardData.k) { currentStudyIndex++; showQuiz(); return; }
+    
+    currentMistakeCount = 0;
+
+    quizQuestionCard.innerHTML = `<h3>${currentCardData.q}</h3>`;
     step1.classList.remove('hidden');
     step2.classList.add('hidden');
     step3.classList.add('hidden');
-    finalAnswerDisplay.innerText = '';
-
-    // Q1. 接続クイズ生成
-    generateOptions(optionsSetsuzoku, SETSUZOKU_LIST, data.setsu, () => {
-        // 正解したら次へ
-        step1.classList.add('hidden');
-        step2.classList.remove('hidden');
+    
+    quizInputSetsu.value = ''; quizInputSetsu.className = 'quiz-input'; quizInputSetsu.disabled = false;
+    quizInputType.value = ''; quizInputType.className = 'quiz-input'; quizInputType.disabled = false;
+    fbSetsu.textContent = ''; fbType.textContent = '';
+    
+    quizKInputs.forEach(input => {
+        input.value = ''; input.className = 'quiz-k-input'; input.disabled = false;
+        input.nextElementSibling.textContent = '';
     });
-
-    // Q2. 種類クイズ生成
-    generateOptions(optionsType, TYPE_LIST, data.type, () => {
-        // 正解したら次へ
-        step2.classList.add('hidden');
-        step3.classList.remove('hidden');
-        
-        // 最終答え表示
-        finalAnswerDisplay.innerText = `【正解】
-接続：${data.setsu}
-種類：${data.type}
-
-【意味】
-${data.imi}
-
-【活用】
-未然：${data.k[0] || ''}
-連用：${data.k[1] || ''}
-終止：${data.k[2] || ''}
-連体：${data.k[3] || ''}
-已然：${data.k[4] || ''}
-命令：${data.k[5] || ''}`;
-    });
+    
+    // ボタンの表示リセット
+    checkStep1Btn.classList.remove('hidden');
+    goStep2Btn.classList.add('hidden');
+    checkStep2Btn.classList.remove('hidden');
+    goStep3Btn.classList.add('hidden');
 }
 
-// 選択肢ボタンを生成する関数
-function generateOptions(container, list, correctAnswer, onCorrect) {
-    container.innerHTML = '';
-    
-    // 正解を含めた4択を作る
-    let choices = [correctAnswer];
-    let others = list.filter(item => item !== correctAnswer);
-    others = others.sort(() => Math.random() - 0.5).slice(0, 3);
-    choices = choices.concat(others);
-    choices.sort(() => Math.random() - 0.5);
+// --- Step1 答え合わせ ---
+checkStep1Btn.addEventListener('click', () => {
+    const userSetsu = normalizeText(quizInputSetsu.value);
+    const ansSetsu = normalizeText(currentCardData.setsu);
+    const userType = normalizeText(quizInputType.value);
+    const ansType = normalizeText(currentCardData.type);
 
-    choices.forEach(choice => {
-        const btn = document.createElement('button');
-        btn.classList.add('option-btn');
-        btn.innerText = choice;
-        
-        btn.addEventListener('click', () => {
-            if (choice === correctAnswer) {
-                // 正解
-                btn.classList.add('correct');
-                setTimeout(onCorrect, 600);
-            } else {
-                // 不正解
-                btn.classList.add('wrong');
-            }
-        });
-        
-        container.appendChild(btn);
+    let isWrong = false;
+
+    if (checkMatch(userSetsu, ansSetsu)) {
+        quizInputSetsu.classList.add('correct-field');
+        fbSetsu.textContent = "⭕️"; fbSetsu.className = "feedback-msg correct";
+    } else {
+        quizInputSetsu.classList.add('wrong-field');
+        fbSetsu.textContent = `❌ 正解: ${currentCardData.setsu}`; fbSetsu.className = "feedback-msg wrong";
+        isWrong = true;
+    }
+
+    if (checkMatch(userType, ansType)) {
+        quizInputType.classList.add('correct-field');
+        fbType.textContent = "⭕️"; fbType.className = "feedback-msg correct";
+    } else {
+        quizInputType.classList.add('wrong-field');
+        fbType.textContent = `❌ 正解: ${currentCardData.type}`; fbType.className = "feedback-msg wrong";
+        isWrong = true;
+    }
+
+    if (isWrong) currentMistakeCount++;
+
+    quizInputSetsu.disabled = true;
+    quizInputType.disabled = true;
+
+    // タイマー削除: ボタン切り替えのみ
+    checkStep1Btn.classList.add('hidden');
+    goStep2Btn.classList.remove('hidden');
+});
+
+// Step1 -> Step2 遷移
+goStep2Btn.addEventListener('click', () => {
+    step1.classList.add('hidden');
+    step2.classList.remove('hidden');
+    quizKInputs[0].focus();
+});
+
+// --- Step2 答え合わせ ---
+checkStep2Btn.addEventListener('click', () => {
+    let isWrong = false;
+
+    quizKInputs.forEach((input, index) => {
+        const userVal = normalizeText(input.value);
+        const ansVal = normalizeText(currentCardData.k[index]);
+        const feedback = input.nextElementSibling;
+        const answers = ansVal.split('/');
+        const isMatch = answers.some(ans => checkMatch(userVal, ans));
+
+        if (isMatch) {
+            input.classList.add('correct-field');
+        } else {
+            input.classList.add('wrong-field');
+            feedback.textContent = currentCardData.k[index];
+            isWrong = true;
+        }
+        input.disabled = true;
     });
+
+    if (isWrong) currentMistakeCount++;
+    updateStats(currentCardData, currentMistakeCount);
+
+    // タイマー削除: ボタン切り替えのみ
+    checkStep2Btn.classList.add('hidden');
+    goStep3Btn.classList.remove('hidden');
+
+    finalAnswerDisplay.innerText = `【正解】
+接続：${currentCardData.setsu}
+種類：${currentCardData.type}
+
+【意味】
+${currentCardData.imi}
+
+【活用】
+未然：${currentCardData.k[0]}
+連用：${currentCardData.k[1]}
+終止：${currentCardData.k[2]}
+連体：${currentCardData.k[3]}
+已然：${currentCardData.k[4]}
+命令：${currentCardData.k[5]}`;
+});
+
+// Step2 -> Step3 遷移
+goStep3Btn.addEventListener('click', () => {
+    step2.classList.add('hidden');
+    step3.classList.remove('hidden');
+});
+
+function updateStats(card, mistakeCount) {
+    if (!card.stats) card.stats = { correct: 0, miss: 0 };
+    if (mistakeCount === 0) card.stats.correct++;
+    else card.stats.miss++;
+    saveToLocalStorage();
+}
+
+function normalizeText(text) {
+    if(!text) return "";
+    return text.replace(/\s+/g, '').replace(/・/g, '').replace(/、/g, '');
+}
+
+function checkMatch(user, answer) {
+    if (user === answer) return true;
+    if (answer.includes(user) && user.length >= 2) return true; 
+    return false;
 }
 
 nextCardBtn.addEventListener('click', () => {
@@ -293,7 +360,9 @@ function quitStudy() {
     studyArea.classList.add('hidden');
     editArea.classList.remove('hidden');
     startBtn.disabled = false;
+    retryMissBtn.disabled = false;
     if(resetDataBtn) resetDataBtn.style.display = 'block';
+    init();
 }
 
 function saveToLocalStorage() {

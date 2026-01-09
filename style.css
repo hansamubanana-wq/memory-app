@@ -1,209 +1,115 @@
+/* --- 以前のCSSはそのまま維持 --- */
 /* 全体のリセット */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
     font-family: "Sawarabi Mincho", serif;
-    background-color: #e6e6fa;
-    color: #2b2b2b;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
+    background-color: #e6e6fa; color: #2b2b2b;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh; padding: 20px;
     background-image: radial-gradient(#dcdcdc 1px, transparent 1px);
     background-size: 20px 20px;
 }
-
 header {
-    margin-bottom: 25px;
-    border-bottom: 2px solid #556b2f;
-    padding-bottom: 10px;
-    width: 100%;
-    max-width: 800px;
-    text-align: center;
+    margin-bottom: 25px; border-bottom: 2px solid #556b2f;
+    padding-bottom: 10px; width: 100%; max-width: 800px; text-align: center;
 }
-
 h1 { color: #556b2f; letter-spacing: 0.1em; }
-
 .hidden { display: none !important; }
 
 /* コントロール */
 .controls-container {
-    margin-bottom: 20px;
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px 20px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    width: 100%; max-width: 600px;
+    margin-bottom: 20px; display: flex; gap: 15px; align-items: center;
+    background: rgba(255, 255, 255, 0.9); padding: 10px 20px;
+    border-radius: 4px; border: 1px solid #ccc;
+    width: 100%; max-width: 600px; flex-wrap: wrap; /* ボタンが多いので折り返し可 */
 }
+#retry-miss-btn:hover { background-color: #e67e00; }
 
-/* --- 入力エリア --- */
+/* 入力エリア */
 #edit-area { width: 100%; display: flex; flex-direction: column; align-items: center; }
-
 .input-container {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 4px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    width: 100%;
-    max-width: 600px;
-    border-top: 5px solid #800080;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 30px;
+    background-color: #fff; padding: 25px; border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 600px;
+    border-top: 5px solid #800080; display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;
 }
-
 input[type="text"], select {
-    padding: 10px;
-    border: 1px solid #aaa;
-    border-radius: 2px;
-    font-size: 1em;
-    font-family: inherit;
-    width: 100%;
+    padding: 10px; border: 1px solid #aaa; border-radius: 2px;
+    font-size: 1em; font-family: inherit; width: 100%;
 }
-
 .label-main, .label, .label-sub {
-    font-weight: bold;
-    color: #556b2f;
-    font-size: 0.9em;
-    display: block;
-    margin-bottom: 5px;
+    font-weight: bold; color: #556b2f; font-size: 0.9em; display: block; margin-bottom: 5px;
 }
 .label-main { font-size: 1.1em; border-bottom: 1px solid #ddd; margin-bottom: 10px; }
-
-.row-group { display: flex; gap: 15px; }
-.half-box { flex: 1; }
-
-.katsuyo-section {
-    background-color: #f9f9f9;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px dashed #ccc;
-}
-
-.katsuyo-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-}
-
-.k-box { display: flex; flex-direction: column; }
-.k-box span { font-size: 0.8em; color: #888; margin-bottom: 2px; }
-
+.row-group { display: flex; gap: 15px; } .half-box { flex: 1; }
+.katsuyo-section { background-color: #f9f9f9; padding: 10px; border-radius: 4px; border: 1px dashed #ccc; }
+.katsuyo-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.k-box { display: flex; flex-direction: column; } .k-box span { font-size: 0.8em; color: #888; margin-bottom: 2px; }
 #add-btn {
-    margin-top: 10px; padding: 12px;
-    background-color: #800080; color: white;
-    border: none; border-radius: 4px;
-    cursor: pointer; font-weight: bold; font-size: 1.1em;
+    margin-top: 10px; padding: 12px; background-color: #800080; color: white;
+    border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1.1em;
 }
-#add-btn:hover { background-color: #4b0082; }
 
-/* --- カード表示（リスト用） --- */
+/* カード表示 */
 .cards-container {
-    display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
-    width: 100%; max-width: 800px;
+    display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; width: 100%; max-width: 800px;
 }
-
 .card {
-    background-color: #fffaf0;
-    width: 240px;
-    min-height: 180px;
-    border-radius: 2px;
-    border: 1px solid #d3d3d3;
+    background-color: #fffaf0; width: 240px; min-height: 180px;
+    border-radius: 2px; border: 1px solid #d3d3d3;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-    display: flex; flex-direction: column;
-    justify-content: center; align-items: center;
-    padding: 20px; text-align: center;
-    position: relative;
-    cursor: pointer;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 20px; text-align: center; position: relative; cursor: pointer;
 }
-
-.card h3 {
-    font-size: 1.4rem; margin-bottom: 10px;
-    color: #2b2b2b; white-space: pre-wrap; width: 100%;
-}
-
-.card p.detail {
-    color: #555; font-size: 0.9em; margin-bottom: 5px;
-}
+.card h3 { font-size: 1.4rem; margin-bottom: 10px; color: #2b2b2b; white-space: pre-wrap; width: 100%; }
+.card p.detail { color: #555; font-size: 0.9em; margin-bottom: 5px; }
 .card p.answer {
-    color: #800080; display: none;
-    white-space: pre-wrap; width: 100%;
-    text-align: left; margin-top: 10px;
-    border-top: 1px solid #ccc; padding-top: 10px;
-    font-size: 0.95em;
+    color: #800080; display: none; white-space: pre-wrap; width: 100%;
+    text-align: left; margin-top: 10px; border-top: 1px solid #ccc; padding-top: 10px; font-size: 0.95em;
 }
 .card.show-answer p.answer { display: block; }
-
 .delete-btn {
-    position: absolute; top: 5px; right: 5px;
-    background-color: #a52a2a; color: white;
-    border: none; border-radius: 50%;
-    width: 24px; height: 24px; font-size: 14px;
-    cursor: pointer; z-index: 10;
+    position: absolute; top: 5px; right: 5px; background-color: #a52a2a; color: white;
+    border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 14px; cursor: pointer; z-index: 10;
 }
 
-/* --- クイズモードのデザイン --- */
-.study-card-wrapper {
-    display: flex; justify-content: center; margin-bottom: 20px;
+/* 成績ラベル */
+.stats-label {
+    margin-top: 8px; font-size: 0.8em; padding: 2px 8px; border-radius: 10px; font-weight: bold;
 }
-.study-card {
-    width: 320px; min-height: 150px;
-    border: 2px solid #556b2f;
-    font-size: 1.2em;
-    pointer-events: none; /* クイズ中はクリック不可 */
-}
+.stats-good { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.stats-bad { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.stats-none { color: #999; font-size: 0.75em; }
 
+/* クイズモード */
+.study-card-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
+.study-card { width: 320px; min-height: 120px; border: 2px solid #556b2f; font-size: 1.2em; pointer-events: none; }
 .quiz-container {
-    width: 100%; max-width: 600px;
-    background: #fff; padding: 20px;
+    width: 100%; max-width: 600px; background: #fff; padding: 20px;
     border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-
 .quiz-instruction {
     font-weight: bold; margin-bottom: 15px; color: #556b2f;
-    border-left: 5px solid #556b2f; padding-left: 10px;
-    font-size: 1.1em;
+    border-left: 5px solid #556b2f; padding-left: 10px; font-size: 1.1em;
 }
-
-.options-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+.quiz-input, .quiz-k-input { background-color: #f8f9fa; border: 2px solid #ccc; transition: all 0.2s; }
+.quiz-input:focus, .quiz-k-input:focus { border-color: #556b2f; background-color: #fff; outline: none; }
+.correct-field { border-color: #28a745 !important; background-color: #d4edda !important; }
+.wrong-field { border-color: #dc3545 !important; background-color: #f8d7da !important; }
+.feedback-msg { font-size: 0.85em; font-weight: bold; height: 1.2em; margin-top: 4px; }
+.feedback-msg.correct { color: #28a745; }
+.feedback-msg.wrong { color: #dc3545; }
+.mini-fb { font-size: 0.8em; color: #d63384; font-weight: bold; min-height: 1.2em; }
+.check-btn {
+    width: 100%; padding: 12px; margin-top: 20px; background-color: #d2691e; color: white;
+    border: none; border-radius: 4px; font-weight: bold; font-size: 1.1em; cursor: pointer;
 }
-
-.option-btn {
-    padding: 15px; background-color: #f8f9fa;
-    border: 2px solid #ddd; border-radius: 4px;
-    cursor: pointer; font-size: 1em; font-weight: bold;
-    transition: all 0.2s;
-}
-.option-btn:hover { background-color: #e2e6ea; border-color: #adb5bd; }
-
-/* 正解・不正解の色 */
-.option-btn.correct { background-color: #d4edda; border-color: #28a745; color: #155724; }
-.option-btn.wrong { background-color: #f8d7da; border-color: #dc3545; color: #721c24; opacity: 0.6; pointer-events: none; }
-
-.final-answer-box {
-    background-color: #fffaf0; padding: 15px;
-    border: 1px solid #ccc; border-radius: 4px;
-    white-space: pre-wrap; text-align: left;
-    margin-bottom: 20px; line-height: 1.6;
-}
-
 .next-btn {
-    width: 100%; padding: 15px;
-    background-color: #28a745; color: white;
-    border: none; border-radius: 4px;
-    font-weight: bold; font-size: 1.1em; cursor: pointer;
+    width: 100%; padding: 15px; background-color: #28a745; color: white;
+    border: none; border-radius: 4px; font-weight: bold; font-size: 1.1em; cursor: pointer;
 }
-.next-btn:hover { background-color: #218838; }
-
-.secondary-btn {
-    background-color: #808080; padding: 10px 20px;
-    color: white; border: none; border-radius: 4px; cursor: pointer;
+.final-answer-box {
+    background-color: #fffaf0; padding: 15px; border: 1px solid #ccc; border-radius: 4px;
+    white-space: pre-wrap; text-align: left; margin-bottom: 20px; line-height: 1.6;
 }
-
+.secondary-btn { background-color: #808080; padding: 10px 20px; color: white; border: none; border-radius: 4px; cursor: pointer; }
 .study-footer { margin-top: 20px; text-align: center; }
