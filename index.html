@@ -12,18 +12,36 @@
         <h1>暗記単語帳</h1>
     </header>
 
-    <div class="input-container">
-        <textarea id="question" placeholder="問題を入力（例：助動詞「ず」の意味と接続）"></textarea>
-        <textarea id="answer" placeholder="答えを入力
+    <div class="controls-container">
+        <label>
+            <input type="checkbox" id="reverse-mode"> 答え → 問題 モード
+        </label>
+        <button id="start-btn">ランダム学習スタート</button>
+    </div>
+
+    <div id="edit-area">
+        <div class="input-container">
+            <textarea id="question" placeholder="問題を入力（例：助動詞「ず」の意味と接続）"></textarea>
+            <textarea id="answer" placeholder="答えを入力
 （例：
 意味：打消
 接続：未然形
 活用：ず・ず・ず・ぬ・ね・○）"></textarea>
-        <button id="add-btn">カードを追加</button>
+            <button id="add-btn">カードを追加</button>
+        </div>
+
+        <div id="cards-container" class="cards-container">
+            </div>
     </div>
 
-    <div id="cards-container" class="cards-container">
+    <div id="study-area" class="hidden">
+        <div id="study-card-container">
+            </div>
+        <div class="study-controls">
+            <button id="next-card-btn">次のカードへ</button>
+            <button id="quit-btn" class="secondary-btn">学習を終了</button>
         </div>
+    </div>
 
     <script src="script.js" defer></script>
 </body>

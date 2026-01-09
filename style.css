@@ -17,14 +17,43 @@ body {
 }
 
 header {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 h1 {
     color: #2c3e50;
 }
 
-/* 入力エリアのデザイン */
+/* --- 画面切り替え用ユーティリティ --- */
+.hidden {
+    display: none !important;
+}
+
+/* --- コントロールエリア（学習ボタンなど） --- */
+.controls-container {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    background: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.controls-container label {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* --- 入力・編集エリア --- */
+#edit-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .input-container {
     background-color: #fff;
     padding: 20px;
@@ -36,19 +65,17 @@ h1 {
     width: 100%;
     max-width: 600px;
     flex-wrap: wrap;
-    /* 変更点：テキストエリアに合わせて上揃えにする */
     align-items: flex-start;
 }
 
-/* 変更点：inputの代わりにtextareaのスタイルを定義 */
 textarea {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    flex: 1; /* 横幅いっぱいに広がる */
+    flex: 1;
     min-width: 200px;
-    height: 100px; /* 高さを少し広めに確保 */
-    resize: vertical; /* 縦方向のみサイズ変更可能にする */
+    height: 100px;
+    resize: vertical;
     font-family: inherit;
 }
 
@@ -61,15 +88,23 @@ button {
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s;
-    height: 40px; /* ボタンの高さを固定してバランスを取る */
+    height: 40px;
 }
 
 button:hover {
     background-color: #0056b3;
 }
 
-/* カードが表示されるエリア */
-.cards-container {
+/* 終了ボタン（グレー） */
+.secondary-btn {
+    background-color: #6c757d;
+}
+.secondary-btn:hover {
+    background-color: #5a6268;
+}
+
+/* --- カード表示エリア --- */
+.cards-container, #study-card-container {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -78,60 +113,56 @@ button:hover {
     max-width: 800px;
 }
 
-/* 個別のカードのデザイン */
+/* カードのデザイン */
 .card {
     background-color: white;
     width: 200px;
-    /* 変更点：高さは固定せず、中身に合わせて伸びるようにする */
-    min-height: 150px; 
-    height: auto; 
+    min-height: 150px;
+    height: auto;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 25px 15px 15px 15px; /* 上の余白を少し増やして×ボタンと被らないように */
-    text-align: center; /* 基本は中央揃え */
+    padding: 25px 15px 15px 15px;
+    text-align: center;
     cursor: pointer;
     position: relative;
     transition: transform 0.2s;
+}
+
+/* 学習モード時はカードを大きくする */
+#study-card-container .card {
+    width: 300px;
+    min-height: 200px;
+    font-size: 1.1em;
 }
 
 .card:active {
     transform: scale(0.98);
 }
 
-/* 問題文のスタイル */
-.card h3 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    color: #2c3e50;
-    /* 変更点：改行を反映させる＆左揃えで見やすく */
-    white-space: pre-wrap; 
+.card h3, .card p.answer {
+    white-space: pre-wrap;
     width: 100%;
 }
 
-/* 答えのスタイル */
 .card p.answer {
     color: #e74c3c;
     font-weight: bold;
     display: none;
-    /* 変更点：改行を反映させる＆左揃えで見やすく */
-    white-space: pre-wrap; 
-    width: 100%;
-    text-align: left; /* 活用表などは左揃えの方が綺麗 */
+    text-align: left;
     margin-top: 10px;
-    border-top: 1px dashed #ddd; /* 区切り線を入れると見やすい */
+    border-top: 1px dashed #ddd;
     padding-top: 10px;
 }
 
-/* JavaScriptでクラスがついた時に答えを表示する */
 .card.show-answer p.answer {
     display: block;
 }
 
-/* 削除ボタンのデザイン */
+/* 削除ボタン */
 .delete-btn {
     position: absolute;
     top: 5px;
@@ -147,10 +178,15 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: background-color 0.2s;
     z-index: 10;
 }
-
 .delete-btn:hover {
     background-color: #cc0000;
+}
+
+/* 学習コントロール */
+.study-controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
 }
